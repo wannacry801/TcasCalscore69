@@ -10,10 +10,11 @@ export default function ResultPage() {
   if (!dataParam) return <div className="p-6">ไม่พบข้อมูล</div>;
 
   const data = JSON.parse(dataParam);
+  const RC = ResultContent as any;
 
   return (
     <div className="p-4">
-      <ResultContent data={data} />
+      <RC data={data} />
     </div>
   );
 }
