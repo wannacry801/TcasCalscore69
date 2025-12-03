@@ -1,7 +1,4 @@
-Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
+All Rights Reserved.
 
-You may not use the material for commercial purposes.
-You may not distribute modified versions of the material.
-You must give appropriate credit.
-
-Full license: https://creativecommons.org/licenses/by-nc-nd/4.0/
+This source code and associated files may not be copied, modified,
+distributed, or used without explicit written permission from the owner.
