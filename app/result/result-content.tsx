@@ -4,6 +4,15 @@ import React, { JSX, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
 
+// ฟังก์ชัน normalize ปรับชื่อให้ตรงกัน 100%
+function normalize(str: string) {
+  return String(str)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "") // ลบช่องว่างทั้งหมด
+    .replace(/[\u200B-\u200D\uFEFF]/g, ""); // ลบ zero-width char
+}
+
 type HistRow = {
   university: string;
   faculty: string;
@@ -38,7 +47,7 @@ export default function ResultContent() {
   }, 0);
 
   // ------------------------------------
-  // โหลดคะแนนย้อนหลัง
+  // โหลดคะแนนย้อนหลัง (แก้ระบบ match)
   // ------------------------------------
   useEffect(() => {
     async function load() {
@@ -47,12 +56,15 @@ export default function ResultContent() {
         const text = await res.text();
         const parsed = parseCSV(text);
 
-        // แมตช์แบบ exact ชัดเจน
+        const uniN = normalize(uni);
+        const facN = normalize(facultyName);
+        const majN = normalize(majorName);
+
         const row = parsed.find(
           (r) =>
-            r.university === uni &&
-            r.faculty === facultyName &&
-            r.major === majorName
+            normalize(r.university) === uniN &&
+            normalize(r.faculty) === facN &&
+            normalize(r.major) === majN
         );
 
         setHistRow(row ?? null);
@@ -63,12 +75,11 @@ export default function ResultContent() {
     load();
   }, [uni, facultyName, majorName]);
 
-  // parse CSV
+  // parse CSV (CSV นายเป็น comma ธรรมดา)
   function parseCSV(text: string): HistRow[] {
     const lines = text.trim().split("\n");
-    if (lines.length < 2) return [];
-
     const dataLines = lines.slice(1);
+
     return dataLines.map((line) => {
       const [u, f, m, s66, s67] = line.split(",").map((x) => x.trim());
 
@@ -82,9 +93,10 @@ export default function ResultContent() {
     });
   }
 
-  // ------------------------------------
-  // วิเคราะห์เทียบคะแนนย้อนหลัง
-  // ------------------------------------
+  // -----------------------------
+  // วิเคราะห์คะแนนย้อนหลัง
+  // -----------------------------
+
   let compareUI: JSX.Element | null = null;
 
   if (histRow) {
@@ -151,9 +163,9 @@ export default function ResultContent() {
     );
   }
 
-  // ------------------------------------
-  // UI หลัก (เหมือนเดิม 100%)
-  // ------------------------------------
+  // -----------------------------
+  // UI หลัก (เหมือนเดิม)
+  // -----------------------------
 
   return (
     <div className="min-h-screen flex justify-center bg-[#F7F3F5] py-12 px-4">
@@ -161,20 +173,21 @@ export default function ResultContent() {
 
         <h1 className="text-3xl font-bold text-center text-[#C0CAC5]">ผลคะแนนรวม</h1>
 
-        {/* CARD — SUMMARY */}
         <div className="rounded-[24px] bg-[#F7CDBA] shadow px-6 py-8 text-center">
           <div className="text-sm text-[#5F5F5F] mb-1">
             {uni} — {facultyName} — {majorName}
           </div>
+
           <div className="text-xs text-[#5F5F5F] mb-3">
             คะแนนรวมคำนวณจาก TGAT / TPAT / A-Level
           </div>
+
           <div className="text-6xl font-bold text-white">
             {total.toFixed(2)}
           </div>
         </div>
 
-        {/* COMPARE CARD */}
+        {/* COMPARE */}
         {compareUI ?? (
           <div className="rounded-[20px] bg-[#F7EDE4] border border-[#E3E2E7] px-5 py-4 text-sm text-[#777]">
             ไม่มีข้อมูลคะแนนย้อนหลังของสาขานี้
@@ -207,7 +220,6 @@ export default function ResultContent() {
           </table>
         </div>
 
-        {/* BACK BUTTON */}
         <Button
           onPress={() => router.push("/")}
           size="lg"
