@@ -10,9 +10,9 @@ function normalize(str: string) {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "")
-    .replace(/—/g, "")
-    .replace(/-/g, "")
-    .replace(/[\u200B-\u200D\uFEFF]/g, "");
+    .replace(/—/g, "") // ลบ em-dash
+    .replace(/-/g, "") // ลบ hyphen ปกติ
+    .replace(/[\u200B-\u200D\uFEFF]/g, ""); // ลบ zero-width
 }
 
 export default function ScorePageContent() {
@@ -52,22 +52,6 @@ export default function ScorePageContent() {
     );
 
   const handleNext = () => {
-    // ปรับ Logic การเตรียม scores ก่อนส่งไปหน้าถัดไป
-    const processedScores = { ...scores };
-
-    Object.keys(processedScores).forEach((subject) => {
-      const normSubject = normalize(subject);
-      const rawValue = processedScores[subject];
-
-      if (normSubject.includes("tpat1")) {
-        // ถ้าเป็น TPAT1 (ฐาน 300) ให้หาร 3 เพื่อให้เป็นฐาน 100 สำหรับหน้า result
-        processedScores[subject] = rawValue / 3;
-      } else if (normSubject.includes("gpax") && rawValue <= 4) {
-        // ถ้าเป็นเกรดเฉลี่ย (ฐาน 4) ให้คูณ 25 เพื่อให้เป็นฐาน 100
-        processedScores[subject] = rawValue * 25;
-      }
-    });
-
     router.push(
       `/result?data=${encodeURIComponent(
         JSON.stringify({
@@ -75,8 +59,7 @@ export default function ScorePageContent() {
           faculty,
           major,
           weights,
-          scores: processedScores, // ส่งคะแนนที่ปรับฐาน (Normalized) แล้วไป
-          rawScores: scores, // (Option) ส่งคะแนนดิบที่ User กรอกไปด้วยถ้าต้องการแสดงผล
+          scores,
         })
       )}`
     );
@@ -99,10 +82,6 @@ export default function ScorePageContent() {
             if (["university", "faculty", "major"].includes(subject)) return null;
             if (Number(percent) <= 0) return null;
 
-            const normSub = normalize(subject);
-            const isTPAT1 = normSub.includes("tpat1");
-            const isGPAX = normSub.includes("gpax");
-
             return (
               <div key={subject}
                 className="rounded-[20px] border border-[#E3E2E7] bg-[#F7EDE4] px-4 py-4 space-y-3">
@@ -110,8 +89,8 @@ export default function ScorePageContent() {
 
                 <Input
                   type="number"
-                  label={`น้ำหนัก ${percent}% ${isTPAT1 ? "(เต็ม 300)" : isGPAX ? "(เกรด 0-4)" : "(เต็ม 100)"}`}
-                  placeholder={isTPAT1 ? "กรอกคะแนนเต็ม 300" : isGPAX ? "เช่น 3.75" : "กรอกคะแนนเต็ม 100"}
+                  label={`น้ำหนัก ${percent}%`}
+                  placeholder="กรอกคะแนนดิบ"
                   onChange={(e) =>
                     setScores({
                       ...scores,
