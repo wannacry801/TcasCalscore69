@@ -4,7 +4,7 @@ import "./globals.css";
 import { Kanit } from "next/font/google";
 import { ReactNode } from "react";
 import { HeroUIProvider } from "@heroui/react";
-import DevPopup from "./components/DevPopup";
+
 
 const kanit = Kanit({
   subsets: ["thai"],
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="font-kanit">
         <HeroUIProvider>   {/* ← สำคัญมาก ต้องมี */}
           {children}
-          <DevPopup />    {/* ต้องอยู่ใน Provider ด้วย */}
+
         </HeroUIProvider>
       </body>
     </html>
