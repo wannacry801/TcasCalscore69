@@ -1,25 +1,20 @@
-"use client";
-
+import type { Metadata } from "next";
 import "./globals.css";
-import { Kanit } from "next/font/google";
-import { ReactNode } from "react";
-import { HeroUIProvider } from "@heroui/react";
 
+export const metadata: Metadata = {
+  title: "TCAS Calculator",
+  description: "เว็บไซต์ช่วยคำนวณคะแนน TCAS เพื่อการตัดสินใจเท่านั้น",
+};
 
-const kanit = Kanit({
-  subsets: ["thai"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-kanit",
-});
-
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="th" className={kanit.variable}>
-      <body className="font-kanit">
-        <HeroUIProvider>   {/* ← สำคัญมาก ต้องมี */}
-          {children}
-
-        </HeroUIProvider>
+    <html lang="th">
+      <body className="bg-[#F7F3F5] text-[#5F5F5F]">
+        {children}
       </body>
     </html>
   );
