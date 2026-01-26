@@ -6,7 +6,7 @@ import { Button } from "@heroui/react";
 
 // ไม่ใช้ SUBJECT_KEYS แล้ว แต่ต้องเหลือไว้เผื่อหน้า result
 const SUBJECT_KEYS = [
-  "TGAT", "TPAT1", "TPAT2", "TPAT3", "TPAT4", "TPAT5",
+  "TGAT","TGAT1","TGAT2","TGAT3","TPAT1", "TPAT2", "TPAT3", "TPAT4", "TPAT5",
   "A-Math1", "A-Math2",
   "Physic", "Chem", "Bio",
   "Thai", "Eng", "Japan", "Korean", "Social"
