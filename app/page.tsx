@@ -192,6 +192,24 @@ return (
         >
           ไปหน้ากรอกคะแนน →
         </Button>
+        {/* ปุ่มสำหรับสาย กสพท */}
+<Button
+  onPress={() => router.push("/kspat")}
+  size="lg"
+  radius="full"
+  variant="bordered"
+  className="
+    mx-auto block mt-4
+    px-12 py-5
+    border-2 border-[#C2855A]
+    text-[#C2855A]
+    text-lg
+    font-semibold
+    hover:bg-[#F7EDE4]
+  "
+>
+  คำนวณคะแนนสำหรับสาย กสพท
+</Button>
        <div className="text-center text-[#9B9B9B] text-xs mt-6 leading-relaxed">
   © 2025 TCAS Score Calculator — All Rights Reserved.<br/>
   โค้ดและเนื้อหาบนเว็บไซต์นี้ได้รับความคุ้มครองตามกฎหมายลิขสิทธิ์ 
