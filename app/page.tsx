@@ -91,10 +91,15 @@ export default function InputPage() {
   <div className="min-h-screen flex justify-center bg-gradient-to-b from-[#F9FBFC] to-[#F3F5F7] py-12 px-4">
       {showAnnouncement && (
         <div className="fixed top-4 left-0 right-0 z-50 px-4 flex justify-center">
-          <div className="max-w-xl w-full rounded-3xl bg-[#FFF5EA] shadow-[0_16px_32px_rgba(0,0,0,0.10)] border border-[#E8C08A] px-4 py-3 flex items-center gap-3">
+          <div className="max-w-xl w-full rounded-[28px] bg-[#FFF5EA] shadow-[0_16px_32px_rgba(0,0,0,0.10)] border border-[#E8C08A] px-4 py-3 flex items-center gap-3">
             <div className="flex-1 text-sm text-[#4B5563] text-center sm:text-left">
-              <p className="font-semibold text-[#C05621]">Website อยู่ในช่วงแก้ไข UI</p>
-              <p>หากเจอปัญหา แนะนำรีเฟรชหรือแจ้งผู้พัฒนา ขอบคุณที่ร่วมทดสอบ</p>
+              <p className="font-semibold text-[#C05621]">Website อยู่ในช่วงUpdate UIและเพิ่มมหาลัย</p>
+              <p>หากเจอปัญหาแนะนำรีเฟรชหรือแจ้งผู้พัฒนาระบบ</p>
+              <p>Update 1.0 beta วิศวะกรรมพระนครเหนือและลาดกระบัง</p>
+              <p>ปิดการใช้การคำนวณคณะวิทยาศาตร์จุฬาลงกรณ์ชั่วคราว</p>
+              <p>เว็ปไซต์นี้อ้างอิงเกณตามMytcas.com</p>
+              <p>เกษตรและกสพทกำลังอัพเดทเข้ามาเร็วนี้</p>
+              <p>ขออภัยในความไม่สะดวก</p>
             </div>
             <button
               aria-label="ปิดประกาศ"
@@ -142,7 +147,7 @@ export default function InputPage() {
             เลือกคณะ
           </label>
 
-          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-4 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
+          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-10 py-5 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
             <select
               disabled={!selectedUniversity}
               value={selectedFaculty}
@@ -150,7 +155,7 @@ export default function InputPage() {
                 setSelectedFaculty(e.target.value);
                 setSelectedMajor("");
               }}
-              className="w-full rounded-full border border-[#E3E7EC] bg-white px-4 py-4 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
+              className="w-full rounded-full border border-[#E3E7EC] bg-white px-10 py-5 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
             >
               <option value="">
                 {selectedUniversity ? "-- เลือกคณะ --" : "กรุณาเลือกมหาวิทยาลัยก่อน"}
@@ -168,12 +173,12 @@ export default function InputPage() {
             เลือกสาขา
           </label>
 
-          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-4 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
+          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-10 py-5 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
             <select
               disabled={!selectedFaculty}
               value={selectedMajor}
               onChange={(e) => setSelectedMajor(e.target.value)}
-              className="w-full rounded-full border border-[#E3E7EC] bg-white px-4 py-4 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
+              className="w-full rounded-full border border-[#E3E7EC] bg-white px-10 py-5 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
             >
               <option value="">
                 {selectedFaculty ? "-- เลือกสาขา --" : "กรุณาเลือกคณะก่อน"}
@@ -192,7 +197,7 @@ export default function InputPage() {
             onPress={handleSubmit}
             size="lg"
             radius="full"
-            className="w-full max-w-md px-10 py-5 bg-gradient-to-r from-[#F6C57F] to-[#F4A261] text-white text-xl font-semibold shadow-[0_12px_28px_rgba(244,162,97,0.35)] hover:opacity-95"
+            className="w-10 max-w-md px-50 py-30 bg-gradient-to-r from-[#F6C57F] to-[#F4A261] text-white text-xl font-semibold shadow-[0_12px_28px_rgba(244,162,97,0.35)] hover:opacity-95"
           >
             ไปหน้ากรอกคะแนน →
           </Button>
@@ -201,7 +206,7 @@ export default function InputPage() {
             size="lg"
             radius="full"
             variant="bordered"
-            className="w-full max-w-md px-10 py-4 border-2 border-[#C2855A] text-[#C2855A] text-lg font-semibold hover:bg-[#FFF5EC] rounded-full"
+            className="w-10 10-w-md px-10 py-4 border-2 border-[#C2855A] text-[#C2855A] text-lg font-semibold hover:bg-[#FFF5EC] rounded-full"
           >
             คำนวณคะแนนสำหรับสาย กสพท
           </Button>

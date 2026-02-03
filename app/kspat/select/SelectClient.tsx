@@ -5,8 +5,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
 
 type MedRow = {
-  track: string;
   university: string;
+  faculty: string; // ใช้เป็น "สาย"
+  major: string;
 };
 
 function parseCSV(text: string): MedRow[] {
@@ -14,8 +15,8 @@ function parseCSV(text: string): MedRow[] {
   if (lines.length < 2) return [];
 
   return lines.slice(1).map((line) => {
-    const [track, university] = line.split(",").map((x) => x.trim());
-    return { track, university };
+    const [university, faculty, major] = line.split(",").map((x) => x.trim());
+    return { university, faculty, major };
   });
 }
 
@@ -34,37 +35,49 @@ export default function KspatSelectClient() {
     }
   }, [dataString]);
 
-  const [rows, setRows] = useState<MedRow[]>([]);
-  const [selectedTrack, setSelectedTrack] = useState("");
-  const [selectedUniversity, setSelectedUniversity] = useState("");
-
   const totalScore: number | undefined = decoded?.totalScore;
 
-  // โหลด MedUnit.csv (แยกจากคณะทั่วไป)
+  const [rows, setRows] = useState<MedRow[]>([]);
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+  const [selectedUniversity, setSelectedUniversity] = useState("");
+
+  // โหลด kspat_university_list.csv (ของ กสพท โดยเฉพาะ)
   useEffect(() => {
     if (!decoded) return;
+
     async function loadCSV() {
       try {
-        const res = await fetch("/MedUnit.csv");
+        const res = await fetch("/kspat_university_list.csv");
         const text = await res.text();
         setRows(parseCSV(text));
       } catch (e) {
-        console.error("โหลด MedUnit.csv ไม่ได้", e);
+        console.error("โหลด kspat_university_list.csv ไม่ได้", e);
       }
     }
+
     loadCSV();
   }, [decoded]);
 
-  if (!decoded || totalScore === undefined) return <div className="p-10">ไม่พบข้อมูลคะแนน</div>;
+  if (!decoded || totalScore === undefined) {
+    return <div className="p-10">ไม่พบข้อมูลคะแนน</div>;
+  }
 
-  const trackOptions = [...new Set(rows.map((r) => r.track))];
+  /** ===== options ===== */
 
-  const universityOptions = rows
-    .filter((r) => r.track === selectedTrack)
-    .map((r) => r.university);
+  // สาย (แพทย์ / ทันตะ / เภสัช / สัตวแพทย์)
+  const facultyOptions = [...new Set(rows.map((r) => r.faculty))];
+
+  // มหาวิทยาลัยตามสายที่เลือก
+  const universityOptions = [
+    ...new Set(
+      rows
+        .filter((r) => r.faculty === selectedFaculty)
+        .map((r) => r.university)
+    ),
+  ];
 
   const handleNext = () => {
-    if (!selectedTrack || !selectedUniversity) {
+    if (!selectedFaculty || !selectedUniversity) {
       alert("กรุณาเลือกข้อมูลให้ครบ");
       return;
     }
@@ -73,7 +86,7 @@ export default function KspatSelectClient() {
       `/kspat/result?data=${encodeURIComponent(
         JSON.stringify({
           totalScore,
-          track: selectedTrack,
+          faculty: selectedFaculty,
           university: selectedUniversity,
         })
       )}`
@@ -92,42 +105,47 @@ export default function KspatSelectClient() {
           <label className="font-medium text-[#2F7D6B]">เลือกสาย</label>
 
           <select
-            value={selectedTrack}
+            value={selectedFaculty}
             onChange={(e) => {
-              setSelectedTrack(e.target.value);
+              setSelectedFaculty(e.target.value);
               setSelectedUniversity("");
             }}
             className="w-full rounded-[16px] border border-[#CFE5DC] px-3 py-2"
           >
             <option value="">-- เลือกสาย --</option>
-            {trackOptions.map((t) => (
-              <option key={t}>{t}</option>
+            {facultyOptions.map((f) => (
+              <option key={f}>{f}</option>
             ))}
           </select>
         </div>
 
-        {/* เลือกมหาลัย */}
+        {/* เลือกมหาวิทยาลัย */}
         <div className="space-y-3">
-          <label className="font-medium text-[#2F7D6B]">เลือกมหาวิทยาลัย</label>
+          <label className="font-medium text-[#2F7D6B]">
+            เลือกมหาวิทยาลัย
+          </label>
 
           <select
-            disabled={!selectedTrack}
+            disabled={!selectedFaculty}
             value={selectedUniversity}
             onChange={(e) => setSelectedUniversity(e.target.value)}
             className="w-full rounded-[16px] border border-[#CFE5DC] px-3 py-2"
           >
             <option value="">
-              {selectedTrack ? "-- เลือกมหาวิทยาลัย --" : "กรุณาเลือกสายก่อน"}
+              {selectedFaculty ? "-- เลือกมหาวิทยาลัย --" : "กรุณาเลือกสายก่อน"}
             </option>
-            {universityOptions.map((u, i) => (
-              <option key={i}>{u}</option>
+            {universityOptions.map((u) => (
+              <option key={u}>{u}</option>
             ))}
           </select>
         </div>
 
+        {/* คะแนน */}
         <div className="rounded-[20px] bg-[#EAF4F0] px-4 py-4 text-center">
           <div className="text-sm text-[#5F8F82]">คะแนนรวมของคุณ</div>
-          <div className="text-3xl font-bold text-[#2F7D6B]">{totalScore}</div>
+          <div className="text-3xl font-bold text-[#2F7D6B]">
+            {totalScore}
+          </div>
         </div>
 
         <Button

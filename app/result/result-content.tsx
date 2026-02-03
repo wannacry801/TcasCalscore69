@@ -203,7 +203,7 @@ export default function ResultContent() {
                         <td className="px-4 py-3 text-[#E67E22] text-[10px] leading-tight border-r border-b border-gray-200">
                           {year === 69 ? "รอ" : (
                             <>
-                              ครั้งที่ 2<br />ครั้งที่ 1
+                               ครั้งที่ 1
                             </>
                           )}
                         </td>
@@ -271,11 +271,11 @@ export default function ResultContent() {
         </div>
 
         {/* Button */}
-        <div className="pt-4 pb-8">
+        <div className="pt-9 pb-8">
             <Button
             radius="full"
             onPress={() => router.push("/")}
-            className="w-full h-14 bg-white border-2 border-gray-100 hover:bg-gray-50 text-gray-500 font-bold text-lg shadow-sm"
+            className="w-10 h-20 bg-white border-2 border-gray-100 hover:bg-gray-50 text-gray-500 font-bold text-lg shadow-sm"
             >
             &lt; กลับหน้าหลัก
             </Button>

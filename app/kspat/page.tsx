@@ -70,45 +70,73 @@ export default function KspatPage() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center bg-[#F2F8F5] py-12 px-4">
-      <div className="w-full max-w-2xl rounded-[28px] bg-white border border-[#DDEBE4] px-6 py-10 space-y-8">
+    <div className="min-h-screen flex justify-center bg-gradient-to-b from-[#F8FAF8] to-[#F1F3F5] py-12 px-4">
+      <div className="w-full max-w-3xl rounded-3xl bg-white shadow-[0_14px_40px_rgba(0,0,0,0.05)] border border-[#E8EBEF] px-5 py-8 sm:px-8 sm:py-10 space-y-8">
 
-        <h1 className="text-3xl font-bold text-center text-[#2F7D6B]">
-          คำนวณคะแนน กสพท
-        </h1>
+        <div className="text-center space-y-2">
+          <p className="text-sm tracking-wide text-[#8BA0A6] font-medium">TCAS กสพท Calculator</p>
+          <h1 className="text-3xl font-bold text-[#1F3A4A]">กรอกคะแนน กสพท</h1>
+          <p className="text-lg text-[#5E6B75]">TPAT1 + A-Level</p>
+        </div>
 
         {/* TPAT1 */}
-        <div className="rounded-[20px] bg-[#EAF4F0] border border-[#CFE5DC] px-4 py-5 space-y-3">
-          <h2 className="font-semibold text-[#2F7D6B] text-lg">
-            TPAT1 (30%)
-          </h2>
-
-          <Input
-            type="number"
-            label="คะแนน TPAT1 (เต็ม 300)"
-            value={tpat1.toString()}
-            onChange={(e) => setTpat1(Number(e.target.value))}
-          />
+        <div className="rounded-3xl border border-[#E6EBEF] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.03)] p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-[#1F3A4A] text-lg">TPAT1 (30%)</h2>
+            <span className="text-sm text-[#7C8B93]">เต็ม 300</span>
+          </div>
+          <div className="flex flex-col gap-3">
+            <div className="flex rounded-full border border-[#E3E7EC] bg-white shadow-[0_6px_16px_rgba(0,0,0,0.02)] focus-within:ring-2 focus-within:ring-[#B8D5C8] overflow-hidden">
+              <input
+                type="number"
+                inputMode="decimal"
+                placeholder="กรอกคะแนน TPAT1"
+                className="flex-1 bg-transparent px-5 py-4 text-lg text-[#1F3A4A] outline-none"
+                value={tpat1}
+                onChange={(e) => setTpat1(e.target.value === "" ? "" : Number(e.target.value))}
+              />
+              <div className="px-5 py-4 text-base text-[#6B7A84] bg-[#F3F6F8] border-l border-[#E3E7EC]">
+                คะแนน
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* A-Level */}
-        <div className="rounded-[20px] bg-[#EAF4F0] border border-[#CFE5DC] px-4 py-5 space-y-4">
-          <h2 className="font-semibold text-[#2F7D6B] text-lg">
-            A-Level (70%)
-          </h2>
-
-          <Input label="ฟิสิกส์" type="number" value={phy.toString()} onChange={(e) => setPhy(Number(e.target.value))} />
-          <Input label="เคมี" type="number" value={chem.toString()} onChange={(e) => setChem(Number(e.target.value))} />
-          <Input label="ชีววิทยา" type="number" value={bio.toString()} onChange={(e) => setBio(Number(e.target.value))} />
-
-          <Input label="คณิตศาสตร์ 1" type="number" value={math1.toString()} onChange={(e) => setMath1(Number(e.target.value))} />
-          <Input label="ภาษาอังกฤษ" type="number" value={eng.toString()} onChange={(e) => setEng(Number(e.target.value))} />
-          <Input label="ภาษาไทย" type="number" value={thai.toString()} onChange={(e) => setThai(Number(e.target.value))} />
-          <Input label="สังคมศึกษา" type="number" value={social.toString()} onChange={(e) => setSocial(Number(e.target.value))} />
+        <div className="rounded-3xl border border-[#E6EBEF] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.03)] p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-[#1F3A4A] text-lg">A-Level (70%)</h2>
+            <span className="text-sm text-[#7C8B93]">เต็มวิชาละ 100</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+            {[
+              { label: "ฟิสิกส์", value: phy, setter: setPhy },
+              { label: "เคมี", value: chem, setter: setChem },
+              { label: "ชีววิทยา", value: bio, setter: setBio },
+              { label: "คณิตศาสตร์ 1", value: math1, setter: setMath1 },
+              { label: "ภาษาอังกฤษ", value: eng, setter: setEng },
+              { label: "ภาษาไทย", value: thai, setter: setThai },
+              { label: "สังคมศึกษา", value: social, setter: setSocial },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="flex rounded-full border border-[#E3E7EC] bg-white shadow-[0_6px_16px_rgba(0,0,0,0.02)] focus-within:ring-2 focus-within:ring-[#B8D5C8] overflow-hidden"
+              >
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  placeholder={item.label}
+                  className="flex-1 bg-transparent px-4 py-4 text-lg text-[#1F3A4A] outline-none text-center"
+                  value={item.value}
+                  onChange={(e) => item.setter(e.target.value === "" ? "" : Number(e.target.value))}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* RESULT */}
-        <div className="rounded-[24px] bg-[#2F7D6B] text-white px-6 py-6 text-center">
+        <div className="rounded-3xl bg-gradient-to-r from-[#6BC2A4] to-[#8DD6BE] text-white px-6 py-6 text-center shadow-[0_12px_28px_rgba(107,194,164,0.35)]">
           <div className="text-sm opacity-90">คะแนนรวม (เต็ม 100)</div>
           <div className="text-5xl font-bold">{totalScore}</div>
         </div>
@@ -116,14 +144,14 @@ export default function KspatPage() {
         <Button
           radius="full"
           size="lg"
-          className="mx-auto block px-14 py-6 bg-[#6BBF9C] text-white
-                     text-2xl font-semibold shadow-md hover:opacity-90"
+          className="w-full max-w-lg mx-auto block px-10 py-5 bg-gradient-to-r from-[#F6C57F] to-[#F4A261] text-white
+                     text-2xl font-semibold shadow-[0_12px_28px_rgba(244,162,97,0.35)] hover:opacity-95"
           onPress={handleNext}
         >
           เลือกสถาบัน →
         </Button>
 
-        <p className="text-xs text-center text-[#7FA99E]">
+        <p className="text-xs text-center text-[#7C8B93]">
           สูตรคำนวณอ้างอิงเกณฑ์ กสพท อย่างเป็นทางการ (30 : 70)
         </p>
       </div>
