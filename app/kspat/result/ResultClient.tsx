@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@heroui/react";
 
 type HisRow = {
@@ -33,17 +33,24 @@ export default function KspatResultClient() {
   const router = useRouter();
 
   const dataString = params.get("data");
-  if (!dataString) return <div className="p-10">ไม่พบข้อมูล</div>;
-
-  const decoded = JSON.parse(decodeURIComponent(dataString));
-  const totalScore: number = decoded.totalScore;
-  const track: string = decoded.track;
-  const university: string = decoded.university;
+  const decoded = useMemo(() => {
+    if (!dataString) return null;
+    try {
+      return JSON.parse(decodeURIComponent(dataString));
+    } catch (e) {
+      console.error("decode data error", e);
+      return null;
+    }
+  }, [dataString]);
 
   const [hisRow, setHisRow] = useState<HisRow | null>(null);
 
-  // โหลด HisScore_KSPAT.csv
+  const totalScore: number = decoded?.totalScore;
+  const track: string = decoded?.track;
+  const university: string = decoded?.university;
+
   useEffect(() => {
+    if (!decoded) return;
     async function load() {
       try {
         const res = await fetch("/HisScore_KSPAT.csv");
@@ -60,7 +67,9 @@ export default function KspatResultClient() {
       }
     }
     load();
-  }, [track, university]);
+  }, [decoded, track, university]);
+
+  if (!decoded) return <div className="p-10">ไม่พบข้อมูล</div>;
 
   // วิเคราะห์ผล
   let compareUI = (

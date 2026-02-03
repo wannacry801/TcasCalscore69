@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
 
@@ -24,17 +24,25 @@ export default function KspatSelectClient() {
   const params = useSearchParams();
 
   const dataString = params.get("data");
-  if (!dataString) return <div className="p-10">ไม่พบข้อมูลคะแนน</div>;
-
-  const decoded = JSON.parse(decodeURIComponent(dataString));
-  const totalScore: number = decoded.totalScore;
+  const decoded = useMemo(() => {
+    if (!dataString) return null;
+    try {
+      return JSON.parse(decodeURIComponent(dataString));
+    } catch (e) {
+      console.error("decode data error", e);
+      return null;
+    }
+  }, [dataString]);
 
   const [rows, setRows] = useState<MedRow[]>([]);
   const [selectedTrack, setSelectedTrack] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
 
+  const totalScore: number | undefined = decoded?.totalScore;
+
   // โหลด MedUnit.csv (แยกจากคณะทั่วไป)
   useEffect(() => {
+    if (!decoded) return;
     async function loadCSV() {
       try {
         const res = await fetch("/MedUnit.csv");
@@ -45,7 +53,9 @@ export default function KspatSelectClient() {
       }
     }
     loadCSV();
-  }, []);
+  }, [decoded]);
+
+  if (!decoded || totalScore === undefined) return <div className="p-10">ไม่พบข้อมูลคะแนน</div>;
 
   const trackOptions = [...new Set(rows.map((r) => r.track))];
 

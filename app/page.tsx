@@ -4,14 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
 
-// ไม่ใช้ SUBJECT_KEYS แล้ว แต่ต้องเหลือไว้เผื่อหน้า result
-const SUBJECT_KEYS = [
-  "TGAT","TGAT1","TGAT2","TGAT3","TPAT1", "TPAT2", "TPAT3", "TPAT4", "TPAT5",
-  "A-Math1", "A-Math2",
-  "Physic", "Chem", "Bio",
-  "Thai", "Eng", "Japan", "Korean", "Social"
-];
-
 type FacultyRow = {
   university: string;
   faculty: string;
@@ -26,20 +18,7 @@ export default function InputPage() {
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const [selectedFaculty, setSelectedFaculty] = useState("");
   const [selectedMajor, setSelectedMajor] = useState("");
-
-  useEffect(() => {
-    async function loadCSV() {
-      try {
-        const res = await fetch("/Score.csv");
-        const text = await res.text();
-        const parsed = parseCSV(text);
-        setRows(parsed);
-      } catch (err) {
-        console.error("โหลด Score.csv ไม่ได้:", err);
-      }
-    }
-    loadCSV();
-  }, []);
+  const [showAnnouncement, setShowAnnouncement] = useState(true);
 
   function parseCSV(text: string): FacultyRow[] {
     const lines = text.trim().split("\n");
@@ -55,12 +34,26 @@ export default function InputPage() {
       result.push({
         university: cols[0]?.trim(),
         faculty: cols[1]?.trim(),
-        major: hasMajor ? cols[2]?.trim() : ""
+        major: hasMajor ? cols[2]?.trim() : "",
       });
     });
 
     return result;
   }
+
+  useEffect(() => {
+    async function loadCSV() {
+      try {
+        const res = await fetch("/Score.csv");
+        const text = await res.text();
+        const parsed = parseCSV(text);
+        setRows(parsed);
+      } catch (err) {
+        console.error("โหลด Score.csv ไม่ได้:", err);
+      }
+    }
+    loadCSV();
+  }, []);
 
   // dropdown options
   const universityOptions = [...new Set(rows.map((r) => r.university))];
@@ -83,38 +76,49 @@ export default function InputPage() {
       .map((r) => r.major || "")
   )
 );
-const handleSubmit = () => {
-  if (!selectedUniversity || !selectedFaculty || !selectedMajor) {
-    alert("กรุณาเลือกข้อมูลให้ครบ");
-    return;
-  }
+  const handleSubmit = () => {
+    if (!selectedUniversity || !selectedFaculty || !selectedMajor) {
+      alert("กรุณาเลือกข้อมูลให้ครบ");
+      return;
+    }
 
-  const payload = {
-    university: selectedUniversity,
-    faculty: selectedFaculty,
-    major: selectedMajor
+    router.push(
+      `/score?university=${encodeURIComponent(selectedUniversity)}&faculty=${encodeURIComponent(selectedFaculty)}&major=${encodeURIComponent(selectedMajor)}`
+    );
   };
 
-  router.push(
-    `/score?university=${encodeURIComponent(selectedUniversity)}&faculty=${encodeURIComponent(selectedFaculty)}&major=${encodeURIComponent(selectedMajor)}`
-  );
-};
-
-return (
-  <div className="min-h-screen flex justify-center bg-[#F7F3F5] py-12 px-4">
-      <div className="w-full max-w-2xl rounded-[24px] bg-white shadow-sm border border-[#E2D8D0] px-6 py-8 space-y-8">
+  return (
+  <div className="min-h-screen flex justify-center bg-gradient-to-b from-[#F9FBFC] to-[#F3F5F7] py-12 px-4">
+      {showAnnouncement && (
+        <div className="fixed top-4 left-0 right-0 z-50 px-4 flex justify-center">
+          <div className="max-w-xl w-full rounded-3xl bg-[#FFF5EA] shadow-[0_16px_32px_rgba(0,0,0,0.10)] border border-[#E8C08A] px-4 py-3 flex items-center gap-3">
+            <div className="flex-1 text-sm text-[#4B5563] text-center sm:text-left">
+              <p className="font-semibold text-[#C05621]">Website อยู่ในช่วงแก้ไข UI</p>
+              <p>หากเจอปัญหา แนะนำรีเฟรชหรือแจ้งผู้พัฒนา ขอบคุณที่ร่วมทดสอบ</p>
+            </div>
+            <button
+              aria-label="ปิดประกาศ"
+              className="rounded-full bg-[#FFF1E6] text-[#C05621] w-8 h-8 flex items-center justify-center font-bold shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+              onClick={() => setShowAnnouncement(false)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="relative w-full max-w-2xl rounded-3xl bg-white shadow-[0_14px_40px_rgba(0,0,0,0.06)] border border-[#E4E7EB] px-6 py-10 space-y-8 mt-10">
         
-        <h1 className="text-3xl font-bold text-center text-[#C0CAC5]">
+        <h1 className="text-3xl font-bold text-center text-[#2F3D4A]">
           TCAS Score Calculator
         </h1>
 
         {/* STEP 1 เลือกมหาวิทยาลัย */}
         <div className="space-y-3">
-          <label className="font-medium text-lg text-[#C0CAC5]">
+          <label className="font-medium text-lg text-[#55616D]">
             เลือกมหาวิทยาลัย
           </label>
 
-          <div className="rounded-[20px] border border-[#E3E2E7] bg-[#F7EDE4] px-4 py-3">
+          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-4 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
             <select
               value={selectedUniversity}
               onChange={(e) => {
@@ -122,7 +126,7 @@ return (
                 setSelectedFaculty("");
                 setSelectedMajor("");
               }}
-              className="w-full rounded-[16px] border border-[#E3E2E7] bg-white px-3 py-2"
+              className="w-full rounded-full border border-[#E3E7EC] bg-white px-4 py-4 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
             >
               <option value="">-- เลือกมหาวิทยาลัย --</option>
               {universityOptions.map((u) => (
@@ -134,11 +138,11 @@ return (
 
         {/* STEP 2 เลือกคณะ */}
         <div className="space-y-3">
-          <label className="font-medium text-lg text-[#C0CAC5]">
+          <label className="font-medium text-lg text-[#55616D]">
             เลือกคณะ
           </label>
 
-          <div className="rounded-[20px] border border-[#E3E2E7] bg-[#F7EDE4] px-4 py-3">
+          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-4 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
             <select
               disabled={!selectedUniversity}
               value={selectedFaculty}
@@ -146,7 +150,7 @@ return (
                 setSelectedFaculty(e.target.value);
                 setSelectedMajor("");
               }}
-              className="w-full rounded-[16px] border border-[#E3E2E7] bg-white px-3 py-2"
+              className="w-full rounded-full border border-[#E3E7EC] bg-white px-4 py-4 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
             >
               <option value="">
                 {selectedUniversity ? "-- เลือกคณะ --" : "กรุณาเลือกมหาวิทยาลัยก่อน"}
@@ -160,16 +164,16 @@ return (
 
         {/* STEP 3 เลือกสาขา */}
         <div className="space-y-3">
-          <label className="font-medium text-lg text-[#C0CAC5]">
+          <label className="font-medium text-lg text-[#55616D]">
             เลือกสาขา
           </label>
 
-          <div className="rounded-[20px] border border-[#E3E2E7] bg-[#F7EDE4] px-4 py-3">
+          <div className="rounded-3xl border border-[#E3E7EC] bg-[#FAF6F2] px-4 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.03)]">
             <select
               disabled={!selectedFaculty}
               value={selectedMajor}
               onChange={(e) => setSelectedMajor(e.target.value)}
-              className="w-full rounded-[16px] border border-[#E3E2E7] bg-white px-3 py-2"
+              className="w-full rounded-full border border-[#E3E7EC] bg-white px-4 py-4 text-lg text-[#2F3D4A] focus:outline-none focus:ring-2 focus:ring-[#F6C57F]"
             >
               <option value="">
                 {selectedFaculty ? "-- เลือกสาขา --" : "กรุณาเลือกคณะก่อน"}
@@ -183,39 +187,29 @@ return (
         </div>
 
         {/* ปุ่มไปหน้ายืนยันกรอกคะแนน */}
-        <Button
-          onPress={handleSubmit}
-          size="lg"
-          radius="full"
-          className="mx-auto block px-12 py-6 bg-[#F7CDBA] text-[#5F5F5F]
-                     text-2xl font-semibold shadow-md hover:opacity-90"
-        >
-          ไปหน้ากรอกคะแนน →
-        </Button>
-        {/* ปุ่มสำหรับสาย กสพท */}
-<Button
-  onPress={() => router.push("/kspat")}
-  size="lg"
-  radius="full"
-  variant="bordered"
-  className="
-    mx-auto block mt-4
-    px-12 py-5
-    border-2 border-[#C2855A]
-    text-[#C2855A]
-    text-lg
-    font-semibold
-    hover:bg-[#F7EDE4]
-  "
->
-  คำนวณคะแนนสำหรับสาย กสพท
-</Button>
+        <div className="flex flex-col gap-4 items-center">
+          <Button
+            onPress={handleSubmit}
+            size="lg"
+            radius="full"
+            className="w-full max-w-md px-10 py-5 bg-gradient-to-r from-[#F6C57F] to-[#F4A261] text-white text-xl font-semibold shadow-[0_12px_28px_rgba(244,162,97,0.35)] hover:opacity-95"
+          >
+            ไปหน้ากรอกคะแนน →
+          </Button>
+          <Button
+            onPress={() => router.push("/kspat")}
+            size="lg"
+            radius="full"
+            variant="bordered"
+            className="w-full max-w-md px-10 py-4 border-2 border-[#C2855A] text-[#C2855A] text-lg font-semibold hover:bg-[#FFF5EC] rounded-full"
+          >
+            คำนวณคะแนนสำหรับสาย กสพท
+          </Button>
+        </div>
        <div className="text-center text-[#9B9B9B] text-xs mt-6 leading-relaxed">
-  © 2025 TCAS Score Calculator — All Rights Reserved.<br/>
-  โค้ดและเนื้อหาบนเว็บไซต์นี้ได้รับความคุ้มครองตามกฎหมายลิขสิทธิ์ 
-  ห้ามคัดลอก นำไปใช้ ทำซ้ำ หรือแจกจ่าย ไม่ว่าในลักษณะใดก็ตาม 
-  เว้นแต่ได้รับอนุญาตเป็นลายลักษณ์อักษรจากผู้พัฒนา<br/><br/>
-  การคำนวณกสพทเอาคะแนนรวมหาร100ก่อนกรอก เว็ปอยู่ในขั้นพัฒนา
+  อยู่ในช่วงแก้ไขuiอาจเกิดbugได้<br/>
+  <br/><br/>
+  © 2025 TCAS Score Calculator — All Rights Reserved.
 </div>
       </div>
     </div>
