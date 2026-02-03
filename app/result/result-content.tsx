@@ -14,6 +14,11 @@ type HistRow = {
 };
 
 // แปลงชื่อมหาวิทยาลัยเป็น slug สำหรับใช้หาไฟล์โลโก้ใน public/logos
+const universityLogoSlugMap: Record<string, string> = {
+  "พระจอมเกล้าพระนครเหนือ(kmutnb)": "kmutnb",
+  "พระจอมเกล้าคุณทหารลาดกระบัง(kmitl)": "kmitl",
+};
+
 function slugifyUniversity(name: string) {
   return name
     .normalize("NFKD")
@@ -24,7 +29,9 @@ function slugifyUniversity(name: string) {
 }
 
 function getUniversityLogo(name: string) {
-  return `/logos/${slugifyUniversity(name)}.png`;
+  const override = universityLogoSlugMap[name];
+  const slug = override ?? slugifyUniversity(name);
+  return `/logos/${slug}.png`;
 }
 
 function getUniversityInitials(name: string) {
@@ -131,7 +138,6 @@ export default function ResultContent() {
         
         {/* Title Section */}
         <div className="text-center pt-6 pb-2">
-            <p className="text-gray-500 text-sm">โปรแกรม 1 เลือก</p>
             <p className="text-gray-800 font-bold text-lg">มหาวิทยาลัย และคณะที่อยากเข้า</p>
         </div>
 
@@ -141,12 +147,12 @@ export default function ResultContent() {
             <div className="flex justify-between items-start mb-6">
               <div className="w-[65%] pr-2">
               <div className="flex items-center gap-2 mb-2">
-                  <div className="relative w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-[11px] font-bold text-gray-500 overflow-hidden">
+                  <div className="relative w-0.1 h-0.1 rounded-full bg-white border-2 border-[#E3E7EC] flex items-center justify-center text-[10px] font-bold text-gray-500 overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
                     {/* รูปโลโก้: วางไฟล์ไว้ที่ public/logos/<slug>.png เช่น จุฬาฯ -> chulalongkorn-university.png */}
                     <img
                       src={getUniversityLogo(university)}
                       alt={university}
-                      className="w-full h-full object-contain"
+                      className="w-[5%] h-[5%] object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none"; // ซ่อนรูปถ้าไม่พบไฟล์
@@ -186,7 +192,6 @@ export default function ResultContent() {
                     <th className="px-4 py-3 text-left rounded-tl-3xl border-r border-b border-gray-200">ปี</th>
                     <th className="px-4 py-3 text-left border-r border-b border-gray-200">ประมวลผล</th>
                     <th className="px-4 py-3 text-left border-r border-b border-gray-200">ต่ำสุด</th>
-                    <th className="px-4 py-3 text-left rounded-tr-3xl border-b border-gray-200">จำนวนรับ</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white">
@@ -205,7 +210,6 @@ export default function ResultContent() {
                         <td className="px-4 py-3 font-bold text-gray-800 text-sm border-r border-b border-gray-200">
                           {year === 69 ? "รอ" : getMinScoreByYear(year)?.toFixed(2) || "-"}
                         </td>
-                        <td className={`px-4 py-3 text-gray-400 border-b border-gray-200 ${isLast ? "rounded-br-3xl" : ""}`}>{year === 69 ? "10" : "-"}</td>
                       </tr>
                     );
                   })}
@@ -224,7 +228,7 @@ export default function ResultContent() {
             <span className="text-xs text-gray-500 mb-1">(เต็ม 100 คะแนน)</span>
           </div>
 
-          {/* Grid 4x4 boxes */}
+          {/* Grid inline (no outer cards) */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {usedSubjects.map(([key, weight], index) => {
               const colors = ['#E67E22', '#3498DB', '#E74C3C', '#9B59B6'];
@@ -235,7 +239,7 @@ export default function ResultContent() {
               return (
                 <div
                   key={key}
-                  className="aspect-square rounded-2xl bg-[#F8FAFB] border-2 border-[#E3E7EC] shadow-[0_6px_14px_rgba(0,0,0,0.04)] p-3 flex flex-col justify-between"
+                  className="rounded-2xl border border-[#E3E7EC] bg-white shadow-[0_6px_14px_rgba(0,0,0,0.04)] p-3 flex flex-col gap-2"
                 >
                   <div className="flex items-center gap-2">
                     <div
@@ -244,10 +248,17 @@ export default function ResultContent() {
                     />
                     <span className="text-sm font-semibold text-[#1F2937] line-clamp-2">{key}</span>
                   </div>
-                  <div className="text-[11px] text-gray-500 leading-tight mt-1">
-                    น้ำหนัก {weightValue}% | ได้ {calculated.toFixed(2)}
+                  <div className="flex items-center justify-between text-[12px] text-gray-600">
+                    <span>น้ำหนัก</span>
+                    <span className="font-semibold" style={{ color: colors[index % 4] }}>
+                      {weightValue}%
+                    </span>
                   </div>
-                  <div className="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                  <div className="flex items-center justify-between text-[12px] text-gray-600">
+                    <span>ได้ (คำนวณ)</span>
+                    <span className="font-semibold text-[#111827]">{calculated.toFixed(2)}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${weightValue}%`, backgroundColor: colors[index % 4] }}

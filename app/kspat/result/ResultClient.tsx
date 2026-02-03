@@ -171,3 +171,22 @@ export default function KspatResultClient() {
     </div>
   );
 }
+const universityLogoSlugMap: Record<string, string> = {
+  "พระจอมเกล้าพระนครเหนือ(kmutnb)": "kmutnb",
+  "พระจอมเกล้าคุณทหารลาดกระบัง(kmitl)": "kmitl",
+};
+
+function slugifyUniversity(name: string) {
+  return name
+    .normalize("NFKD")
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .toLowerCase();
+}
+
+function getUniversityLogo(name: string) {
+  const override = universityLogoSlugMap[name];
+  const slug = override ?? slugifyUniversity(name);
+  return `/logos/${slug}.png`;
+}

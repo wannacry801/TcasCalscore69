@@ -106,7 +106,7 @@ export default function ScorePageContent() {
                 type="number"
                 inputMode="decimal"
                 placeholder={subject}
-                className="w-full rounded-2xl bg-white text-center border-2 border-[#D5D9DF] px-4 py-4 text-lg font-semibold text-[#1F3A4A] outline-none focus:border-[#F6C57F] focus:ring-2 focus:ring-[#F6C57F] placeholder:text-[#CBD2D8]"
+                className="w-full rounded-full bg-white text-center border-2 border-[#D5D9DF] px-5 py-4 text-lg font-semibold text-[#1F3A4A] outline-none focus:border-[#F6C57F] focus:ring-2 focus:ring-[#F6C57F] placeholder:text-[#CBD2D8]"
                 onChange={(e) =>
                   setScores({
                     ...scores,
@@ -142,7 +142,7 @@ export default function ScorePageContent() {
           <Button
             radius="full"
             size="lg"
-            className="w-full px-10 py-5 text-xl font-semibold bg-gradient-to-r from-[#6BC2A4] to-[#8DD6BE] text-white shadow-[0_12px_28px_rgba(107,194,164,0.35)] hover:opacity-95"
+            className="w-full px-5 py-4 text-xl font-semibold bg-gradient-to-r from-[#6BC2A4] to-[#8DD6BE] text-white shadow-[0_12px_28px_rgba(107,194,164,0.35)] hover:opacity-95"
             onPress={handleNext}
           >
             ไปหน้าผลคะแนน →
